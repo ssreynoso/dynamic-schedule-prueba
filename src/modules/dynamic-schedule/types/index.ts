@@ -1,7 +1,5 @@
 import { IntervalScrollingCallback } from '../hooks/use-interval-scrolling'
 
-import { CSSStyle } from '@/types/utils'
-
 // Item de la tabla
 export interface BaseItem {
     id: string | number
@@ -27,10 +25,7 @@ export type RowAssigner<T> = (item: T, linesPerRow: number) => { rowStart: numbe
 export type SubComponent<T> = (props: SubComponentProps<T>) => JSX.Element
 
 // Props del componente que se renderiza en cada celda
-export type SubComponentProps<T> = {
-    item: T & Partial<BaseItem>
-    style?: CSSStyle
-}
+export type SubComponentProps<T> = { item: T & Partial<BaseItem> }
 
 export type VoidItemComponent = (props: VoidItemComponentProps) => JSX.Element
 

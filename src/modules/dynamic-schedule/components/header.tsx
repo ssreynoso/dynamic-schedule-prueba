@@ -8,7 +8,7 @@ type Props = PropsWithChildren<{
 
 export const DynamicScheduleHeader = ({ style, className, children }: Props) => {
     return (
-        <div className={cn('grid border-b h-12 sticky top-0 z-40 bg-background', className)} style={style}>
+        <div className={cn('grid border-b h-12 sticky top-0 z-40 bg-red-300', className)} style={style}>
             {children}
         </div>
     )

@@ -6,12 +6,14 @@ import { DynamicScheduleLines } from './components/lines'
 import { DynamicScheduleColumns } from './components/columns'
 import { DynamicScheduleColumn } from './components/column'
 import { DynamicScheduleRows } from './components/rows'
-import { FilteredItems } from './components/filtered-items'
+import { ColumnItems } from './components/column-items'
 import { VoidCells } from './components/void-cells'
 import { DynamicScheduleProps } from './types'
 
 import { cn } from '@/lib/utils'
 import { getUUID } from '@/lib/uuid'
+import { VoidCellsColumn } from './components/void-cells-column'
+import { ColumnItemsContainer } from './components/column-items-container'
 
 export const DynamicSchedule = <T,>(props: DynamicScheduleProps<T>) => {
     const {
@@ -70,30 +72,25 @@ export const DynamicSchedule = <T,>(props: DynamicScheduleProps<T>) => {
             <DynamicScheduleColumns style={styleObject.columns}>
                 <DynamicScheduleRows rows={rows} style={styleObject.rows} linesPerRow={linesPerRow} />
 
-                {/* {columns.map((column) => {
-                    const filteredItems = items.filter((i) => columnAssigner(i, column))
+                {columns.map((column) => {
+                    const columnItems = items.filter((i) => columnAssigner(i, column))
 
                     return (
-                        <DynamicScheduleColumn key={getUUID()} styleObject={styleObject}>
-                            <FilteredItems
-                                ItemComponent={ItemComponent}
-                                rowAssigner={rowAssigner}
-                                linesPerRow={linesPerRow}
-                                filteredItems={filteredItems}
-                            />
-                            {VoidItemComponent && (
-                                <VoidCells
-                                    column={column}
-                                    rows={rows}
+                        <DynamicScheduleColumn key={getUUID()}>
+                            <VoidCellsColumn style={styleObject.rows}>
+                                <VoidCells column={column} rows={rows} VoidItemComponent={VoidItemComponent} />
+                            </VoidCellsColumn>
+                            <ColumnItemsContainer style={styleObject.rows}>
+                                <ColumnItems
+                                    ItemComponent={ItemComponent}
                                     rowAssigner={rowAssigner}
                                     linesPerRow={linesPerRow}
-                                    filteredItems={filteredItems}
-                                    VoidItemComponent={VoidItemComponent}
+                                    columnItems={columnItems}
                                 />
-                            )}
+                            </ColumnItemsContainer>
                         </DynamicScheduleColumn>
                     )
-                })} */}
+                })}
             </DynamicScheduleColumns>
         </div>
     )
