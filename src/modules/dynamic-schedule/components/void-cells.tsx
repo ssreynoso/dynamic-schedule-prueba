@@ -4,19 +4,19 @@ import { Column, DynamicScheduleProps } from '../types'
 import { getUUID } from '@/lib/uuid'
 import { VoidCell } from './void-cell'
 
-type Props<T> = Pick<DynamicScheduleProps<T>, 'rows' | 'VoidItemComponent'> & {
+type Props<T> = Pick<DynamicScheduleProps<T>, 'rows' | 'VoidItemComponent' | 'ItemComponent'> & {
     column: Column
 }
 
 export const VoidCells = <T,>(props: Props<T>) => {
-    const { rows, column, VoidItemComponent } = props
+    const { rows, column, VoidItemComponent, ItemComponent } = props
 
     const voidCells = calculateVoidCells({ rows })
 
     return (
         <>
             {voidCells.map((cell) => (
-                <VoidCell key={getUUID()} column={column} cell={cell} VoidItemComponent={VoidItemComponent} />
+                <VoidCell key={getUUID()} column={column} cell={cell} VoidItemComponent={VoidItemComponent} ItemComponent={ItemComponent} />
             ))}
         </>
     )

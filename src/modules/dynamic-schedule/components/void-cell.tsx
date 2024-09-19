@@ -1,32 +1,32 @@
 import { cn } from '@/lib/utils'
-import { Column, DynamicScheduleProps } from '../types'
+import { BaseItem, Column, DynamicScheduleProps } from '../types'
 import { VoidCell as TVoidCell } from '../lib/calculate-void-cells'
+import { useDroppable } from '@dnd-kit/core'
+import { useDynamicScheduleStore } from '../stores/dynamic-schedule-store'
 
-type Props<T> = Pick<DynamicScheduleProps<T>, 'VoidItemComponent'> & {
+type Props<T> = Pick<DynamicScheduleProps<T>, 'VoidItemComponent' | 'ItemComponent'> & {
     column: Column
     cell: TVoidCell
 }
 
-export const VoidCell = <T,>({ column, cell, VoidItemComponent }: Props<T>) => {
-    const handleMouseEnter = () => {
-        // console.log('mouse enter')
-        // console.log('column', column)
-        // console.log('cell', cell)
-    }
+export const VoidCell = <T,>({ column, cell, VoidItemComponent, ItemComponent }: Props<T>) => {
+    const activeItem = useDynamicScheduleStore((state) => state.activeItem)
 
-    const handleMouseLeave = () => {
-        // console.log('mouse exit')
-        // console.log('column', column)
-        // console.log('cell', cell)
-    }
+    const id = `${column.id}-${cell.row.id}`
+
+    const { isOver, setNodeRef } = useDroppable({ id })
 
     return (
-        <div
-            className={cn('w-full h-full bg-orange-400 border border-red-50', 'flex items-center justify-center')}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-        >
-            {VoidItemComponent ? <VoidItemComponent columnId={column.id} row={cell.row} /> : <>Void</>}
+        <div id={id} ref={setNodeRef} className={cn('w-full h-full border border-red-50', 'flex items-center justify-center')}>
+            {isOver ? (
+                <div className='w-full h-full'>
+                    {activeItem ? <ItemComponent item={activeItem as T & BaseItem} className='opacity-70' /> : 'Drop here'}
+                </div>
+            ) : VoidItemComponent ? (
+                <VoidItemComponent columnId={column.id} row={cell.row} />
+            ) : (
+                <>Void</>
+            )}
         </div>
     )
 }

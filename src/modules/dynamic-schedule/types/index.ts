@@ -3,7 +3,9 @@ import { IntervalScrollingCallback } from '../hooks/use-interval-scrolling'
 // Item de la tabla
 export interface BaseItem {
     id: string | number
-    columnId: string
+    columnId: number
+    rowId: number
+    rowSpan: number
 }
 
 // Columna de la tabla
@@ -15,23 +17,24 @@ export type Row = { id: number; label: string }
 // Función que se ejecuta al hacer click en el header
 export type HeaderOnClick = (column: Column['id']) => void
 
-// Función que asigna un item a una columna
-export type ColumnAssigner<T> = (item: T, column: Column) => boolean
-
-// Función que asigna un item a una fila
-export type RowAssigner<T> = (item: T, linesPerRow: number) => { rowStart: number; rowEnd: number }
-
 // Componente que se renderiza en cada celda
 export type SubComponent<T> = (props: SubComponentProps<T>) => JSX.Element
 
 // Props del componente que se renderiza en cada celda
-export type SubComponentProps<T> = { item: T & Partial<BaseItem> }
+export type SubComponentProps<T> = { item: T & Partial<BaseItem>; className?: string }
 
 export type VoidItemComponent = (props: VoidItemComponentProps) => JSX.Element
 
 export type VoidItemComponentProps = {
     columnId: Column['id']
     row: Row
+}
+
+export type ItemToMove<T> = { item: T & BaseItem; newColumnId: number; newRowId: number }
+
+export type OnChangeItemsProps<T> = {
+    itemsToMove: ItemToMove<T>[]
+    callback: (confirmed: boolean) => void
 }
 
 // Props del componente DynamicSchedule
@@ -44,12 +47,13 @@ export type DynamicScheduleProps<T> = {
     headerClassName?: string
     linesClassName?: string
     className?: string
-    columnAssigner: ColumnAssigner<T>
-    rowAssigner: RowAssigner<T>
-    items: (T & Partial<BaseItem>)[]
+    scheduleItems: (T & BaseItem)[]
+    setScheduleItems: (items: (T & BaseItem)[]) => void
     ItemComponent: SubComponent<T>
     VoidItemComponent?: VoidItemComponent
-    onHeaderClick?: HeaderOnClick
     intervalScrollingCallback?: IntervalScrollingCallback
+    onChangeItems: (props: OnChangeItemsProps<T>) => void
+    onHeaderClick?: HeaderOnClick
+    itemCanDragOnX?: (item: BaseItem['id']) => boolean
     yAxisLabel?: string
 }

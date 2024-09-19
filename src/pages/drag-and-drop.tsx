@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import React, { useState, useRef } from 'react'
+import './drag-and-drop.css'
 
-export const useDragAndDrop = () => {
+export const DragAndDrop = () => {
     const [dragging, setDragging] = useState(false)
     const [position, setPosition] = useState({ x: 0, y: 0 })
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
@@ -14,7 +15,6 @@ export const useDragAndDrop = () => {
     const cloneRef = useRef<HTMLDivElement>(null)
     const containerRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)]
 
-    // Handle mouse on the selected element to drag
     const handleMouseDown = (e: React.MouseEvent) => {
         if (elementRef.current) {
             const rect = elementRef.current.getBoundingClientRect()
@@ -61,7 +61,7 @@ export const useDragAndDrop = () => {
         setHoveredContainer(null)
     }
 
-    useEffect(() => {
+    React.useEffect(() => {
         if (dragging) {
             window.addEventListener('mousemove', handleMouseMove)
             window.addEventListener('mouseup', handleMouseUp)
@@ -76,16 +76,56 @@ export const useDragAndDrop = () => {
         }
     }, [dragging])
 
-    return {
-        elementRef,
-        cloneRef,
-        containerRefs,
-        currentContainer,
-        hoveredContainer,
-        dragging,
-        position,
-        dimensions,
-        isOriginalVisible,
-        handleMouseDown,
-    }
+    return (
+        <div className='w-full h-[calc(100vh-64px)] flex items-center justify-center bg-slate-900'>
+            <div className='grid grid-cols-3 h-1/2 w-2/3 gap-4'>
+                {containerRefs.map((ref, index) => (
+                    <div key={index} ref={ref} className='droppable-container'>
+                        {currentContainer === index ? (
+                            <div
+                                ref={elementRef}
+                                className='w-1/2 h-1/2 bg-blue-600 flex items-center justify-center select-none'
+                                onMouseDown={handleMouseDown}
+                                style={{
+                                    opacity: isOriginalVisible ? 1 : 0.5,
+                                    cursor: dragging ? 'grabbing' : 'grab',
+                                }}
+                            >
+                                Contenido
+                            </div>
+                        ) : (
+                            dragging &&
+                            hoveredContainer === index && (
+                                <div
+                                    className='w-1/2 h-1/2 bg-blue-600 flex items-center justify-center select-none'
+                                    style={{
+                                        opacity: 0.5,
+                                        cursor: 'grabbing',
+                                    }}
+                                >
+                                    Contenido
+                                </div>
+                            )
+                        )}
+                        {dragging && currentContainer === index && (
+                            <div
+                                ref={cloneRef}
+                                className='w-1/2 h-1/2 bg-blue-600 flex items-center justify-center select-none'
+                                style={{
+                                    position: 'absolute',
+                                    left: position.x,
+                                    top: position.y,
+                                    width: `${dimensions.width}px`,
+                                    height: `${dimensions.height}px`,
+                                    cursor: 'grabbing',
+                                }}
+                            >
+                                Contenido
+                            </div>
+                        )}
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
 }

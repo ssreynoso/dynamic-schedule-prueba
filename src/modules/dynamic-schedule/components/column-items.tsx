@@ -3,20 +3,21 @@ import { DynamicScheduleProps } from '../types'
 import { getUUID } from '@/lib/uuid'
 import { ColumnItem } from './column-item'
 
-type Props<T> = Pick<DynamicScheduleProps<T>, 'ItemComponent' | 'linesPerRow' | 'rowAssigner'> & {
-    columnItems: DynamicScheduleProps<T>['items']
+type Props<T> = Pick<DynamicScheduleProps<T>, 'ItemComponent'> & {
+    columnItems: DynamicScheduleProps<T>['scheduleItems']
 }
 
 export const ColumnItems = <T,>(props: Props<T>) => {
-    const { ItemComponent, linesPerRow, rowAssigner, columnItems } = props
+    const { ItemComponent, columnItems } = props
 
     return (
         <>
             {columnItems.map((item) => {
-                const { rowStart, rowEnd } = rowAssigner(item, linesPerRow)
+                const rowStart = item.rowId
+                const rowEnd = item.rowId + item.rowSpan
 
                 return (
-                    <ColumnItem key={getUUID()} rowStart={rowStart.toString()} rowEnd={rowEnd.toString()}>
+                    <ColumnItem item={item} key={getUUID()} rowStart={rowStart.toString()} rowEnd={rowEnd.toString()}>
                         <ItemComponent item={item} />
                     </ColumnItem>
                 )
